@@ -216,4 +216,12 @@ class ConcOpaqueSquaresView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+        fun create(activity : Activity) : ConcOpaqueSquaresView {
+            val view : ConcOpaqueSquaresView = ConcOpaqueSquaresView(activity)
+            activity.setContentView(view)
+            return view 
+        }
+    }
 }
