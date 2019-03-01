@@ -40,6 +40,8 @@ fun Canvas.drawCOSNode(i : Int, scale : Float, paint : Paint) {
     paint.strokeWidth = Math.min(w, h) / strokeFactor
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
+    save()
+    translate(w / 2, (i + 1) * gap)
     for (j in 0..(squares - 1)) {
         val k : Int = squares - 1 - j
         val efSize : Float = sizeGap * (k + 1)
@@ -55,6 +57,7 @@ fun Canvas.drawCOSNode(i : Int, scale : Float, paint : Paint) {
         drawRect(rect, paint)
         restore()
     }
+    restore()
 }
 
 class ConcOpaqueSquaresView(ctx : Context) : View(ctx) {
@@ -119,6 +122,32 @@ class ConcOpaqueSquaresView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class COSNode(var i : Int, val state : State = State()) {
+
+        private var next : COSNode? = null
+        private var prev : COSNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = COSNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawCOSNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
+        }
+
+        fun update(cb : (Int, Float) -> Unit) {
+
         }
     }
 }
