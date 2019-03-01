@@ -30,6 +30,10 @@ fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
 fun Float.mirrorValue(a : Int, b : Int) : Float = (1 - scaleFactor()) * a.inverse() + scaleFactor() * b.inverse()
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
 
+fun Paint.setArgbFromColor(color : Int, sc : Float) {
+    this.color = Color.argb((255 * sc).toInt(), Color.red(color), Color.green(color), Color.blue(color))
+}
+
 fun Canvas.drawCOSNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
@@ -42,6 +46,7 @@ fun Canvas.drawCOSNode(i : Int, scale : Float, paint : Paint) {
     val sc2 : Float = scale.divideScale(1, 2)
     save()
     translate(w / 2, (i + 1) * gap)
+    rotate(90f * sc2)
     for (j in 0..(squares - 1)) {
         val k : Int = squares - 1 - j
         val efSize : Float = sizeGap * (k + 1)
@@ -50,10 +55,10 @@ fun Canvas.drawCOSNode(i : Int, scale : Float, paint : Paint) {
         save()
         paint.alpha = (255 * sc).toInt()
         paint.style = Paint.Style.FILL
-        paint.color = fillColor
+        paint.setArgbFromColor(fillColor, sc)
         drawRect(rect, paint)
         paint.style = Paint.Style.STROKE
-        paint.color = strokeColor
+        paint.setArgbFromColor(strokeColor, sc)
         drawRect(rect, paint)
         restore()
     }
@@ -221,7 +226,7 @@ class ConcOpaqueSquaresView(ctx : Context) : View(ctx) {
         fun create(activity : Activity) : ConcOpaqueSquaresView {
             val view : ConcOpaqueSquaresView = ConcOpaqueSquaresView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
