@@ -191,6 +191,28 @@ class ConcOpaqueSquaresView(ctx : Context) : View(ctx) {
         fun startUpdating(cb : () -> Unit) {
             curr.startUpdating(cb)
         }
-        
+
+    }
+
+    data class Renderer(var view : ConcOpaqueSquaresView) {
+
+        private val animator : Animator = Animator(view)
+        private val cos : ConcOpaqueSquares = ConcOpaqueSquares(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            cos.draw(canvas, paint)
+            animator.animate {
+                cos.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            cos.startUpdating {
+                animator.start()
+            }
+        }
     }
 }
